@@ -1,0 +1,9 @@
+[package]
+name = "machina"
+version = "0.1.0"
+authors = ["ion <ionix@protonmail.com>"]
+
+[dependencies]
+libc = "*"
+aligned_alloc = "*"
+region = "*"
