@@ -42,8 +42,8 @@ impl Cache {
 
     pub fn get_stub(&mut self, name: String, value: usize) -> &Vec<u8> {
         let asm = &mut self.cache.get_mut(&name).unwrap().asm;
-        let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_be()) };
-        let actual_bytes: [u8; 4] = unsafe { transmute((value as u32).to_be()) };
+        let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_le()) };
+        let actual_bytes: [u8; 4] = unsafe { transmute((value as u32).to_le()) };
         let pos = find_subsequence(&asm, &bytes).unwrap();
         for i in pos..pos + 4 {
             asm[i] = actual_bytes[i - pos];
