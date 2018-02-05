@@ -7,3 +7,4 @@ authors = ["ion <ionix@protonmail.com>"]
 libc = "*"
 aligned_alloc = "*"
 region = "*"
+sam = { git = "https://github.com/ioncodes/sam", branch = "native-cli" }
