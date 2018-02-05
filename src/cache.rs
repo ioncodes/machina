@@ -41,6 +41,7 @@ impl Cache {
     }
 
     pub fn get_stub(&mut self, name: String, value: usize) -> &Vec<u8> {
+        // would be interesting to see that optimization crate here. It caches parameters!
         let asm = &mut self.cache.get_mut(&name).unwrap().asm;
         let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_le()) };
         let actual_bytes: [u8; 4] = unsafe { transmute((value as u32).to_le()) };
