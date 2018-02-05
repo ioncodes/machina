@@ -10,15 +10,15 @@ extern "C" {
 
 pub const PAGE_SIZE: usize = 4096; // TODO: Reconsider this.
 
-pub struct Machina {
+pub struct Memory {
     memory: *mut u8,
     memory_size: usize,
     memory_ptr: *mut (),
     pc: usize,
 }
 
-impl Machina {
-    pub fn new(amount_pages: usize) -> Machina {
+impl Memory {
+    pub fn new(amount_pages: usize) -> Memory {
         let memory: *mut u8;
         let memory_size = amount_pages * PAGE_SIZE;
         let ptr: *mut libc::c_void;
@@ -31,7 +31,7 @@ impl Machina {
             memory = mem::transmute(ptr);
         }
         let memory_ptr = ptr as *mut ();
-        Machina {
+        Memory {
             memory,
             memory_size,
             memory_ptr,
@@ -84,7 +84,7 @@ impl Machina {
     }
 }
 
-impl Index<usize> for Machina {
+impl Index<usize> for Memory {
     type Output = u8;
 
     fn index(&self, _index: usize) -> &u8 {
@@ -92,13 +92,13 @@ impl Index<usize> for Machina {
     }
 }
 
-impl IndexMut<usize> for Machina {
+impl IndexMut<usize> for Memory {
     fn index_mut(&mut self, _index: usize) -> &mut u8 {
         unsafe { &mut *self.memory.offset(_index as isize) }
     }
 }
 
-impl Drop for Machina {
+impl Drop for Memory {
     fn drop(&mut self) {
         unsafe {
             aligned_alloc::aligned_free(self.memory_ptr);
