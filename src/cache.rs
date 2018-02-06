@@ -46,7 +46,6 @@ impl Cache {
     }
 
     pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {
-        // would be interesting to see that optimization crate here. It caches parameters!
         let other = OptimizedCache { name: (&name).to_string(), value };
         let mut asm = self.cache.get(&name).unwrap().asm.to_owned();
         let cached = self.check_cache(&other);
