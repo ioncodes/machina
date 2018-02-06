@@ -22,7 +22,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
     /// use machina::cache::Cache;
     ///
     /// let cache = Cache::new(true);
@@ -42,7 +42,10 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::cache::Cache;
+    ///
+    /// let mut cache = Cache::new(false);
     /// cache.set_stub(0x31313131);
     /// ```
     pub fn set_stub(&mut self, stub: usize) {
@@ -56,8 +59,11 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```ignore
-    /// cache.insert("inc_rax", vec![0x48, 0xff, 0xc0]);
+    /// ```
+    /// use machina::cache::Cache;
+    ///
+    /// let mut cache = Cache::new(false);
+    /// cache.insert("inc_rax".to_string(), vec![0x48, 0xff, 0xc0]);
     /// ```
     pub fn insert(&mut self, name: String, asm: Vec<u8>) {
         self.cache.insert(name, Entry {
@@ -73,8 +79,11 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```ignore
-    /// cache.insert_with_stub("mov_rax_x", vec![...]); // bytes with `STUB`
+    /// ```
+    /// use machina::cache::{Cache,STUB};
+    ///
+    /// let mut cache = Cache::new(false);
+    /// cache.insert_with_stub("mov_rax_x".to_string(), vec![0x48, 0xc7, 0xc0, 0x37, 0x13, 0x37, 0x13]); // bytes with `STUB` (default: 0x13371337)
     /// ```
     pub fn insert_with_stub(&mut self, name: String, asm: Vec<u8>) {
         self.cache.insert(name, Entry {
@@ -89,22 +98,30 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```ignore
-    /// let _ = cache.get("inc_rax");
+    /// ```
+    /// use machina::cache::Cache;
+    ///
+    /// let mut cache = Cache::new(false);
+    /// cache.insert("inc_rax".to_string(), vec![0x48, 0xff, 0xc0]);
+    /// let _ = cache.get("inc_rax".to_string());
     /// ```
     pub fn get(&self, name: String) -> Vec<u8> {
         self.cache.get(&name).unwrap().asm.to_owned()
     }
 
-    /// Get without loading the stub
+    /// Get with loading the stub
     /// 
     /// * `name` - The identifier
     /// * `value` - The stub replacement
     /// 
     /// # Examples
     ///
-    /// ```ignore
-    /// let _ = cache.get_stub("mov_rax_x", 0x13371337);
+    /// ```
+    /// use machina::cache::{Cache,STUB};
+    ///
+    /// let mut cache = Cache::new(false);
+    /// cache.insert_with_stub("mov_rax_x".to_string(), vec![0x48, 0xc7, 0xc0, 0x37, 0x13, 0x37, 0x13]); // bytes with STUB (default: 0x13371337)
+    /// let _ = cache.get_stub("mov_rax_x".to_string(), 0x69696969); // replace STUB with 0x69696969
     /// ```
     pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {
         let other = OptimizedCache { name: (&name).to_string(), value };
