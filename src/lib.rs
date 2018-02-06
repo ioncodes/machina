@@ -6,3 +6,4 @@ pub mod memory;
 pub mod cache;
 mod entry;
 mod helpers;
+mod optimized_cache;
