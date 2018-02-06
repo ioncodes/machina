@@ -8,7 +8,7 @@ Yap.
 Emulators, JIT, dynarec, etc.
 
 ## Example
-```rs
+```rust
 extern crate machina;
 #[macro_use]
 extern crate sam; // just to keep it simple
