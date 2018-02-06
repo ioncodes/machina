@@ -46,9 +46,7 @@ impl Cache {
         let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_le()) };
         let actual_bytes: [u8; 4] = unsafe { transmute((value as u32).to_le()) };
         let pos = find_subsequence(&asm, &bytes).unwrap();
-        for i in pos..pos + 4 {
-            asm[i] = actual_bytes[i - pos];
-        }
+        asm[pos..pos + 4].clone_from_slice(&actual_bytes[(pos - pos)..(pos + 4 - pos)]);
         asm
     }
 }
