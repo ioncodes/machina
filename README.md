@@ -25,7 +25,7 @@ fn main() {
     let memory = Memory::new(1); // 1 page = 4096 bytes
     cache.insert("mov_rax_x".to_string(), sam!(x64 => &asm)); // create the bytes at compile time via sam
 
-    memory.emit_bytes(cache.get_stub("mov_rax_x", address as u64)) // get "mov_rax_x" and fill in a dynamic address
+    memory.emit_bytes(cache.get_stub("mov_rax_x".to_string(), address as u64)) // get "mov_rax_x" and fill in a dynamic address
     let rax = memory.execute(); // returns rax
 }
 ```
