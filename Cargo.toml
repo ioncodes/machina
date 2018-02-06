@@ -3,6 +3,8 @@ name = "machina"
 version = "0.4.0"
 authors = ["ion <ionix@protonmail.com>"]
 repository = "https://github.com/ioncodes/machina"
+license = "MIT"
+description = "Manage and execute assembly at runtime."
 
 [dependencies]
 libc = "*"
