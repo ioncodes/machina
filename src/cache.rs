@@ -4,8 +4,10 @@ use entry::Entry;
 use helpers::find_subsequence;
 use optimized_cache::OptimizedCache;
 
+/// The default stub value
 pub const STUB: usize = 0x13371337;
 
+/// Manages the instructions.
 pub struct Cache {
     stub: usize,
     cache: HashMap<String, Entry>,
@@ -14,6 +16,17 @@ pub struct Cache {
 }
 
 impl Cache {
+    /// Constructs a new `Cache`.
+    /// 
+    /// * `optimize` - Optimize cache
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use machina::cache::Cache;
+    ///
+    /// let cache = Cache::new(true);
+    /// ```
     pub fn new(optimize: bool) -> Cache {
         Cache {
             stub: STUB,
@@ -23,10 +36,29 @@ impl Cache {
         }
     }
 
+    /// Sets the stub.
+    /// 
+    /// * `stub` - The new stub
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// cache.set_stub(0x31313131);
+    /// ```
     pub fn set_stub(&mut self, stub: usize) {
         self.stub = stub;
     }
 
+    /// Insert without stub
+    /// 
+    /// * `name` - The identifier
+    /// * `asm` - The bytes
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// cache.insert("inc_rax", vec![0x48, 0xff, 0xc0]);
+    /// ```
     pub fn insert(&mut self, name: String, asm: Vec<u8>) {
         self.cache.insert(name, Entry {
             asm: asm,
@@ -34,6 +66,16 @@ impl Cache {
         });
     }
 
+    /// Insert with stub
+    /// 
+    /// * `name` - The identifier
+    /// * `asm` - The bytes
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// cache.insert_with_stub("mov_rax_x", vec![...]); // bytes with `STUB`
+    /// ```
     pub fn insert_with_stub(&mut self, name: String, asm: Vec<u8>) {
         self.cache.insert(name, Entry {
             asm: asm,
@@ -41,10 +83,29 @@ impl Cache {
         });
     }
 
+    /// Get without loading the stub
+    /// 
+    /// * `name` - The identifier
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// let _ = cache.get("inc_rax");
+    /// ```
     pub fn get(&self, name: String) -> Vec<u8> {
         self.cache.get(&name).unwrap().asm.to_owned()
     }
 
+    /// Get without loading the stub
+    /// 
+    /// * `name` - The identifier
+    /// * `value` - The stub replacement
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// let _ = cache.get_stub("mov_rax_x", 0x13371337);
+    /// ```
     pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {
         let other = OptimizedCache { name: (&name).to_string(), value };
         let mut asm = self.cache.get(&name).unwrap().asm.to_owned();
