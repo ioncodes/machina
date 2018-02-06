@@ -26,7 +26,7 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
     /// use machina::memory::Memory;
     ///
     /// let memory = Memory::new(1);
@@ -58,7 +58,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.fill(0xc3); // ret
     /// ```
     pub fn fill(&mut self, asm: u8) {
@@ -71,7 +74,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.reset();
     /// ```
     pub fn reset(&mut self) {
@@ -85,7 +91,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.emit(0xc3); // ret
     /// ```
     pub fn emit(&mut self, asm: u8) {
@@ -100,7 +109,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.emit_bytes(vec![0x48, 0xff, 0xc0]); // mov rax, 3
     /// ```
     pub fn emit_bytes(&mut self, asm: Vec<u8>) {
@@ -116,7 +128,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.emit32(0x12341234);
     /// ```
     pub fn emit32(&mut self, asm: u32) {
@@ -133,7 +148,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// memory.emit64(0x12341234);
     /// ```
     pub fn emit64(&mut self, asm: u64) {
@@ -145,7 +163,10 @@ impl Memory {
     /// 
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use machina::memory::Memory;
+    ///
+    /// let mut memory = Memory::new(1);
     /// let _ = memory.execute();
     /// ```
     pub fn execute(&self) -> usize {
