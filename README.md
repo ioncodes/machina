@@ -1,4 +1,4 @@
-# machina [![Foo](https://img.shields.io/crates/v/machina.svg)](https://crates.io/crates/machina)  
+# machina [![crates.io](https://img.shields.io/crates/v/machina.svg)](https://crates.io/crates/machina) [![docs.rs](https://docs.rs/machina/badge.svg)](https://docs.rs/machina)  
 Manage and execute assembly at runtime.
 
 ## Crossplatform?
