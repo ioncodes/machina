@@ -22,7 +22,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use machina::cache::Cache;
     ///
     /// let cache = Cache::new(true);
@@ -42,7 +42,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// cache.set_stub(0x31313131);
     /// ```
     pub fn set_stub(&mut self, stub: usize) {
@@ -56,7 +56,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// cache.insert("inc_rax", vec![0x48, 0xff, 0xc0]);
     /// ```
     pub fn insert(&mut self, name: String, asm: Vec<u8>) {
@@ -73,7 +73,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// cache.insert_with_stub("mov_rax_x", vec![...]); // bytes with `STUB`
     /// ```
     pub fn insert_with_stub(&mut self, name: String, asm: Vec<u8>) {
@@ -89,7 +89,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// let _ = cache.get("inc_rax");
     /// ```
     pub fn get(&self, name: String) -> Vec<u8> {
@@ -103,7 +103,7 @@ impl Cache {
     /// 
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// let _ = cache.get_stub("mov_rax_x", 0x13371337);
     /// ```
     pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {

@@ -7,9 +7,9 @@ license = "MIT"
 description = "Manage and execute assembly at runtime."
 
 [dependencies]
-libc = "*"
-aligned_alloc = "*"
-region = "*"
+libc = "0.2"
+aligned_alloc = "0.1.3"
+region = "0.1.1"
 
 [dev-dependencies]
 sam = "0.2.0"
