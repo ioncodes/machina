@@ -9,7 +9,7 @@ extern "C" {
 }
 
 /// Default page size
-pub const PAGE_SIZE: usize = 4096; // TODO: Reconsider this.
+pub const PAGE_SIZE: usize = 1024;
 
 /// Handles memory management.
 pub struct Memory {
@@ -36,7 +36,7 @@ impl Memory {
         let memory_size = amount_pages * PAGE_SIZE;
         let ptr: *mut libc::c_void;
         unsafe {
-            ptr = aligned_alloc::aligned_alloc(PAGE_SIZE, memory_size) as *mut libc::c_void;
+            ptr = aligned_alloc::aligned_alloc(memory_size, memory_size) as *mut libc::c_void;
             let mut view = View::new(ptr as *const u8, memory_size).unwrap();
             view.set_prot(Protection::ReadWriteExecute.into()).unwrap();
             memset(ptr, 0xc3, memory_size);
