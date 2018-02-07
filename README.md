@@ -7,6 +7,20 @@ Yap.
 ## Why?
 Emulators, JIT, dynarec, etc.
 
+## Install
+To build the tests you need [sam](https://github.com/ioncodes/sam).  
+In ```Cargo.toml```:
+```toml
+[dependencies]
+machina = "*"
+```
+If you work with many instructions, you may want to enable optimization (only applied to ```Cache```):
+```toml
+[dependencies.machina]
+version = "*"
+features = ["optimize"]
+```
+
 ## Example
 ```rust
 extern crate machina;
@@ -21,7 +35,7 @@ fn main() {
     let dummy = 64;
     let address = &dummy as *const _; // address of dummy
 
-    let cache = Cache::new(true); // optimize?
+    let cache = Cache::new();
     let memory = Memory::new(1); // 1 page = 4096 bytes
     cache.insert("mov_rax_x".to_string(), sam!(x64 => &asm)); // create the bytes at compile time via sam
 

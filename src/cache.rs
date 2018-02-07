@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::mem::transmute;
 use entry::Entry;
 use helpers::find_subsequence;
+#[cfg(feature = "optimize")]
 use optimized_cache::OptimizedCache;
 
 /// The default stub value
@@ -11,28 +12,43 @@ pub const STUB: usize = 0x13371337;
 pub struct Cache {
     stub: usize,
     cache: HashMap<String, Entry>,
-    optimized_cache: HashMap<OptimizedCache, Vec<u8>>,
-    optimize: bool,
+    #[cfg(feature = "optimize")]
+    optimized_cache: HashMap<OptimizedCache, Vec<u8>>
 }
 
 impl Cache {
     /// Constructs a new `Cache`.
-    /// 
-    /// * `optimize` - Optimize cache
     /// 
     /// # Examples
     ///
     /// ```
     /// use machina::cache::Cache;
     ///
-    /// let cache = Cache::new(true);
+    /// let cache = Cache::new();
     /// ```
-    pub fn new(optimize: bool) -> Cache {
+    #[cfg(feature = "optimize")]
+    pub fn new() -> Cache {
         Cache {
             stub: STUB,
             cache: HashMap::<String, Entry>::new(),
             optimized_cache: HashMap::<OptimizedCache, Vec<u8>>::new(),
-            optimize: optimize
+        }
+    }
+
+    /// Constructs a new `Cache`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use machina::cache::Cache;
+    ///
+    /// let cache = Cache::new();
+    /// ```
+    #[cfg(not(feature = "optimize"))]
+    pub fn new() -> Cache {
+        Cache {
+            stub: STUB,
+            cache: HashMap::<String, Entry>::new(),
         }
     }
 
@@ -45,7 +61,7 @@ impl Cache {
     /// ```
     /// use machina::cache::Cache;
     ///
-    /// let mut cache = Cache::new(false);
+    /// let mut cache = Cache::new();
     /// cache.set_stub(0x31313131);
     /// ```
     pub fn set_stub(&mut self, stub: usize) {
@@ -62,7 +78,7 @@ impl Cache {
     /// ```
     /// use machina::cache::Cache;
     ///
-    /// let mut cache = Cache::new(false);
+    /// let mut cache = Cache::new();
     /// cache.insert("inc_rax".to_string(), vec![0x48, 0xff, 0xc0]);
     /// ```
     pub fn insert(&mut self, name: String, asm: Vec<u8>) {
@@ -82,7 +98,7 @@ impl Cache {
     /// ```
     /// use machina::cache::{Cache,STUB};
     ///
-    /// let mut cache = Cache::new(false);
+    /// let mut cache = Cache::new();
     /// cache.insert_with_stub("mov_rax_x".to_string(), vec![0x48, 0xc7, 0xc0, 0x37, 0x13, 0x37, 0x13]); // bytes with `STUB` (default: 0x13371337)
     /// ```
     pub fn insert_with_stub(&mut self, name: String, asm: Vec<u8>) {
@@ -101,7 +117,7 @@ impl Cache {
     /// ```
     /// use machina::cache::Cache;
     ///
-    /// let mut cache = Cache::new(false);
+    /// let mut cache = Cache::new();
     /// cache.insert("inc_rax".to_string(), vec![0x48, 0xff, 0xc0]);
     /// let _ = cache.get("inc_rax".to_string());
     /// ```
@@ -119,15 +135,16 @@ impl Cache {
     /// ```
     /// use machina::cache::{Cache,STUB};
     ///
-    /// let mut cache = Cache::new(false);
+    /// let mut cache = Cache::new();
     /// cache.insert_with_stub("mov_rax_x".to_string(), vec![0x48, 0xc7, 0xc0, 0x37, 0x13, 0x37, 0x13]); // bytes with STUB (default: 0x13371337)
     /// let _ = cache.get_stub("mov_rax_x".to_string(), 0x69696969); // replace STUB with 0x69696969
     /// ```
+    #[cfg(feature = "optimize")]
     pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {
         let other = OptimizedCache { name: (&name).to_string(), value };
         let mut asm = self.cache.get(&name).unwrap().asm.to_owned();
         let cached = self.check_cache(&other);
-        if self.optimize && cached.is_ok() {
+        if cached.is_ok() {
             cached.unwrap().to_owned()
         } else {
             let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_le()) };
@@ -139,10 +156,32 @@ impl Cache {
         }
     }
 
+    /// Get with loading the stub
+    /// 
+    /// * `name` - The identifier
+    /// * `value` - The stub replacement
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use machina::cache::{Cache,STUB};
+    ///
+    /// let mut cache = Cache::new();
+    /// cache.insert_with_stub("mov_rax_x".to_string(), vec![0x48, 0xc7, 0xc0, 0x37, 0x13, 0x37, 0x13]); // bytes with STUB (default: 0x13371337)
+    /// let _ = cache.get_stub("mov_rax_x".to_string(), 0x69696969); // replace STUB with 0x69696969
+    /// ```
+    #[cfg(not(feature = "optimize"))]
+    pub fn get_stub(&mut self, name: String, value: usize) -> Vec<u8> {
+        let mut asm = self.cache.get(&name).unwrap().asm.to_owned();
+        let bytes: [u8; 4] = unsafe { transmute((self.stub as u32).to_le()) };
+            let actual_bytes: [u8; 4] = unsafe { transmute((value as u32).to_le()) };
+            let pos = find_subsequence(&asm, &bytes).unwrap();
+            asm[pos..pos + 4].clone_from_slice(&actual_bytes[(pos - pos)..(pos + 4 - pos)]);
+            asm.to_owned()
+    }
+
+    #[cfg(feature = "optimize")]
     fn check_cache(&self, other: &OptimizedCache) -> Result<Vec<u8>, String> {
-        if !self.optimize {
-            return Err("Not optimizing.".to_string());
-        }
         if let Some(cache) = self.optimized_cache.get(other) {
             Ok(cache.to_owned())
         } else {
