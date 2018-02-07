@@ -36,7 +36,7 @@ fn main() {
     let address = &dummy as *const _; // address of dummy
 
     let cache = Cache::new();
-    let memory = Memory::new(1); // 1 page = 4096 bytes
+    let memory = Memory::new(1); // 1 page = 1024 bytes
     cache.insert("mov_rax_x".to_string(), sam!(x64 => &asm)); // create the bytes at compile time via sam
 
     memory.emit_bytes(cache.get_stub("mov_rax_x".to_string(), address as u64)) // get "mov_rax_x" and fill in a dynamic address
