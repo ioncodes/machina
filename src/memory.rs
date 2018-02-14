@@ -12,10 +12,11 @@ extern "C" {
 pub const PAGE_SIZE: usize = 1024;
 
 /// Handles memory management.
+#[derive(Debug)]
 pub struct Memory {
     memory: *mut u8,
     memory_size: usize,
-    memory_ptr: *mut (),
+    pub memory_ptr: *mut (),
     pc: usize,
 }
 
